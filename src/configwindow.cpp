@@ -24,7 +24,7 @@
 
 ConfigWindow* ConfigWindow::createConfigWindow(screen_context_t context, screen_window_t parent)
 {
-	const int zOrder = 10; // FIXME: hardcoded
+	const int zOrder = 10; /* FIXME: hardcoded */
 	ConfigWindow *window = new ConfigWindow(context, parent);
 	if (!window->m_valid) {
 		delete window;
@@ -50,7 +50,7 @@ screen_buffer_t ConfigWindow::draw(TCOContext *emuContext)
 	}
 
 	{
-		// Fill pixels
+		/* Fill pixels */
 		int i=0,j=0;
 		for (i=0; i<m_size[1]; i++) {
 			for (j=0; j<m_size[0]; j++) {
@@ -72,7 +72,7 @@ void ConfigWindow::runEventLoop(TCOContext *emuContext)
 	bool showingWindow = true;
 	bps_initialize();
 	screen_request_events(m_context);
-	bps_event_t *event; // FIXME: How do we verify they ran bps_initialize?
+	bps_event_t *event; /* FIXME: How do we verify they ran bps_initialize? */
 	screen_event_t se;
 	int eventType;
 	int contactId;

@@ -44,11 +44,6 @@ void LabelWindow::draw(PNGReader &reader)
 		fprintf(stderr, "Unable to get label window buffer\n");
 		return;
 	}
-//
-//	if (reader.m_stride != stride || reader.m_height != m_size[1]) {
-//		fprintf(stderr, "Memcpy is unsafe!!!\n");
-//	}
-//	memcpy(pixels, reader.m_data, reader.m_stride * reader.m_height);
 	screen_buffer_t pixmapBuffer;
 	screen_get_pixmap_property_pv(reader.m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&pixmapBuffer);
 

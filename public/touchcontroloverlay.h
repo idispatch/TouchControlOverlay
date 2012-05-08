@@ -46,7 +46,7 @@ struct tco_callbacks {
 	int (*handleKeyFunc)(int sym, int mod, int scancode, uint16_t unicode, int event);
 	int (*handleDPadFunc)(int angle, int event);
 	int (*handleTouchFunc)(int dx, int dy);
-	int (*handleMouseButtonFunc)(int button, int mask, int event); // TODO: Unify keyboard mod with mouse mask
+	int (*handleMouseButtonFunc)(int button, int mask, int event); /* TODO: Unify keyboard mod with mouse mask */
 	int (*handleTapFunc)();
 	int (*handleTouchScreenFunc)(int x, int y, int tap, int hold);
 };

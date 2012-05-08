@@ -66,7 +66,7 @@ bool PNGReader::doRead()
 		return false;
 	}
 
-	// Exception handling
+	/* Exception handling */
 	if (setjmp(png_jmpbuf(m_read))) {
 		fprintf(stderr, "PNG jumped to failure\n");
 		return false;
@@ -91,8 +91,6 @@ bool PNGReader::doRead()
 	png_set_palette_to_rgb(m_read);
 	png_set_tRNS_to_alpha(m_read);
 	png_set_bgr(m_read);
-	//if (png_get_channels(m_read, m_info) < channels)
-	//	png_set_filler(m_read, 0xff, PNG_FILLER_AFTER);
 
 	m_data = new unsigned char[m_width * m_height * channels];
 	m_stride = m_width * channels;
@@ -108,7 +106,7 @@ bool PNGReader::doRead()
 		int format = SCREEN_FORMAT_RGBA8888;
 		int size[2] = {m_width, m_height};
 
-		rc = screen_create_pixmap(&m_pixmap, m_context); // FIXME: Check failure
+		rc = screen_create_pixmap(&m_pixmap, m_context); /* FIXME: Check failure */
 		rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_FORMAT, &format);
 		rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_BUFFER_SIZE, size);
 		rc = screen_create_pixmap_buffer(m_pixmap);

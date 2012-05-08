@@ -116,7 +116,7 @@ int TCOContext::showConfig(screen_window_t window)
 
 int TCOContext::loadDefaultControls()
 {
-	// Create a single 1024x600 touch screen.
+	/* Create a single 1024x600 touch screen. */
 	Control *control = new Control(m_screenContext,
 			Control::TOUCHSCREEN, 0, 0, 1024, 600,
 			new TouchScreenEventDispatcher(m_handleTouchScreenFunc), 0);
@@ -152,7 +152,7 @@ int TCOContext::loadControls(const char *filename)
 
 	xmlNode *root = xmlDocGetRootElement(xml.m_doc);
 
-	// Check version
+	/* Check version */
 	bool versionMatch = false;
 	if (root && root->properties) {
 		xmlAttr *properties = root->properties;
@@ -258,12 +258,12 @@ bool TCOContext::touchEvent(screen_event_t event)
 		for (; iter != m_controls.end(); iter++)
 		{
 			if (*iter == touchPointOwner)
-				continue; // already checked
+				continue; /* already checked */
 
 			handled |= (*iter)->handleTouch(type, contactId, pos, timestamp);
 			if (handled) {
 				m_controlMap[contactId] = (*iter);
-				break; // Only allow the first control to handle the touch.
+				break; /* Only allow the first control to handle the touch. */
 			}
 		}
     }

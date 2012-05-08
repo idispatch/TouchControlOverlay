@@ -30,44 +30,6 @@ const static int pngGreen = 1;
 const static int pngBlue = 2;
 const static int pngAlpha = 3;
 
-//struct TrackedPNG
-//{
-//	TrackedPNG(FILE *file)
-//		: m_read(0)
-//		, m_info(0)
-//		, m_data(0)
-//		, m_rows(0)
-//		, m_buffer(0)
-//		, m_width(0)
-//		, m_height(0)
-//		, m_stride(0)
-//		, m_file(file)
-//	{}
-//
-//	~TrackedPNG()
-//	{
-//		delete [] m_rows;
-//		delete [] m_data;
-//
-//		if (m_read)
-//			png_destroy_read_struct(&m_read, m_info ? &m_info : (png_infopp) 0, (png_infopp) 0);
-//		if (m_buffer)
-//			screen_destroy_buffer(m_buffer);
-//		if (m_file)
-//			fclose(m_file);
-//	}
-//
-//	png_structp m_read;
-//	png_infop m_info;
-//	unsigned char* m_data;
-//	png_bytep* m_rows;
-//	screen_buffer_t m_buffer;
-//	int m_width;
-//	int m_height;
-//	int m_stride;
-//	FILE *m_file;
-//};
-
 Control::Control(screen_context_t context, ControlType type,
 		int x, int y, unsigned width, unsigned height,
 		EventDispatcher *dispatcher, EventDispatcher *tapDispatcher)
@@ -117,13 +79,13 @@ void Control::fill()
 	unsigned char *pixels;
 	int stride;
 
-	int rc = screen_create_pixmap(&m_pixmap, m_context); // FIXME: Check failure
+	int rc = screen_create_pixmap(&m_pixmap, m_context); /* FIXME: Check failure */
 	rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_FORMAT, &format);
 	rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_BUFFER_SIZE, size);
 	rc = screen_create_pixmap_buffer(m_pixmap);
 	rc = screen_get_pixmap_property_pv(m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&m_buffer);
-//	rc = screen_get_buffer_property_pv(m_buffer, SCREEN_PROPERTY_POINTER, (void **)&pixels);
-//	rc = screen_get_buffer_property_iv(m_buffer, SCREEN_PROPERTY_STRIDE, &stride);
+/* 	rc = screen_get_buffer_property_pv(m_buffer, SCREEN_PROPERTY_POINTER, (void **)&pixels); */
+/* 	rc = screen_get_buffer_property_iv(m_buffer, SCREEN_PROPERTY_STRIDE, &stride); */
 	int attribs[] = {
 		SCREEN_BLIT_COLOR, (int)controlColors[controlNum],
 		SCREEN_BLIT_END
@@ -152,24 +114,6 @@ bool Control::loadFromPNG(const char *filename)
 	png.m_pixmap = 0;
 	m_buffer = png.m_buffer;
 	png.m_buffer = 0;
-//	int rc;
-//	{
-//		int format = SCREEN_FORMAT_RGBA8888;
-//		int size[2] = {png.m_width, png.m_height};
-
-//
-//		rc = screen_create_pixmap(&m_pixmap, m_context); // FIXME: Check failure
-//		rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_FORMAT, &format);
-//		rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_BUFFER_SIZE, size);
-//		rc = screen_create_pixmap_buffer(m_pixmap);
-//
-//		unsigned char *realPixels;
-//		int realStride;
-//		rc = screen_get_pixmap_property_pv(m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&m_buffer);
-//		rc = screen_get_buffer_property_pv(m_buffer, SCREEN_PROPERTY_POINTER, (void **)&realPixels);
-//		rc = screen_get_buffer_property_iv(m_buffer, SCREEN_PROPERTY_STRIDE, &realStride);
-//		memcpy(realPixels, png.m_data, realStride * m_srcHeight);
-//	}
 
 	return true;
 }
@@ -241,7 +185,7 @@ bool Control::handleTap(int contactId, const int pos[])
 		return false;
 
 	if (m_contactId != -1) {
-		// We have a contact point set already. No taps allowed.
+		/*  We have a contact point set already. No taps allowed. */
 		return false;
 	}
 	if (!inBounds(pos))
@@ -254,18 +198,18 @@ bool Control::handleTap(int contactId, const int pos[])
 bool Control::handleTouch(int type, int contactId, const int pos[], long long timestamp)
 {
 	if (m_contactId != -1 && m_contactId != contactId) {
-		// We have a contact point set and this isn't it.
+		/*  We have a contact point set and this isn't it. */
 		return false;
 	}
 
 	if (m_contactId == -1) {
-		// Don't handle orphaned release events.
+		/*  Don't handle orphaned release events. */
 		if (type == SCREEN_EVENT_MTOUCH_RELEASE)
 			return false;
 		if (!inBounds(pos))
 			return false;
 
-		// This is a new touch point that we should start handling
+		/*  This is a new touch point that we should start handling */
 		m_contactId = contactId;
 
 		switch (m_type)
@@ -286,7 +230,7 @@ bool Control::handleTouch(int type, int contactId, const int pos[], long long ti
 			}
 			break;
 		case TOUCHAREA:
-			//fprintf(stderr, "Toucharea: new touch %d,%d\n", pos[0],pos[1]);
+			/* fprintf(stderr, "Toucharea: new touch %d,%d\n", pos[0],pos[1]); */
 			m_touchDownTime = timestamp;
 			m_lastPos[0] = pos[0];
 			m_lastPos[1] = pos[1];
@@ -308,7 +252,7 @@ bool Control::handleTouch(int type, int contactId, const int pos[], long long ti
 		}
 	} else {
 		if (!inBounds(pos)) {
-			// Act as if we received a key up
+			/* Act as if we received a key up */
 			switch (m_type)
 			{
 			case KEY:
@@ -356,7 +300,7 @@ bool Control::handleTouch(int type, int contactId, const int pos[], long long ti
 			return false;
 		}
 
-		// We have had a previous touch point from this contact and this point is in bounds
+		/* We have had a previous touch point from this contact and this point is in bounds */
 		switch (m_type)
 		{
 		case KEY:
@@ -440,7 +384,6 @@ bool Control::handleTouch(int type, int contactId, const int pos[], long long ti
 		}
 
 		if (type == SCREEN_EVENT_MTOUCH_RELEASE) {
-			//fprintf(stderr, "Update touch - release\n");
 			m_contactId = -1;
 			m_touchScreenInHoldEvent = false;
 			m_touchScreenInMoveEvent = false;

@@ -27,16 +27,21 @@ class Control
 {
 public:
 	enum ControlType {
-		KEY,              // Used to provide keyboard input
-		DPAD,             // Provides angle and magnitude from center (0 east, 90 north, 180 west, 270 south)
-		TOUCHAREA,        // Used to provide relative mouse motion
-		MOUSEBUTTON,      // Used to provide mouse button state
-		TOUCHSCREEN		  // Provides: mouse move, left click tap and right click tap-hold
+		KEY,              /* Used to provide keyboard input */
+		DPAD,             /* Provides angle and magnitude from center (0 east, 90 north, 180 west, 270 south) */
+		TOUCHAREA,        /* Used to provide relative mouse motion */
+		MOUSEBUTTON,      /* Used to provide mouse button state */
+		TOUCHSCREEN		  /* Provides: mouse move, left click tap and right click tap-hold */
 	};
 
-	Control(screen_context_t context, ControlType type,
-			int x, int y, unsigned width, unsigned height,
-			EventDispatcher *dispatcher, EventDispatcher *tapDispatcher=0);
+	Control(screen_context_t context,
+            ControlType type,
+			int x, 
+            int y, 
+            unsigned width, 
+            unsigned height,
+			EventDispatcher *dispatcher, 
+            EventDispatcher *tapDispatcher=0);
 	~Control();
 	void fill();
 	bool loadFromPNG(const char *filename);
@@ -69,11 +74,11 @@ private:
 
 	int m_contactId;
 
-	// For touch areas
+	/* For touch areas */
 	int m_lastPos[2];
 	long long m_touchDownTime;
 
-	// For touch screens
+	/* For touch screens */
 	int m_startPos[2];
 	long long m_touchScreenStartTime;
 	bool m_touchScreenInMoveEvent;
