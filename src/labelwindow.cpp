@@ -56,6 +56,7 @@ void LabelWindow::draw(PNGReader &reader)
 			SCREEN_BLIT_DESTINATION_Y, 0,
 			SCREEN_BLIT_DESTINATION_WIDTH, m_size[0],
 			SCREEN_BLIT_DESTINATION_HEIGHT, m_size[1],
+			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE_OVER,
 			SCREEN_BLIT_END
 	};
 	screen_blit(m_context, buffer, pixmapBuffer, attribs);

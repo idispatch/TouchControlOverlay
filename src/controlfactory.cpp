@@ -114,6 +114,9 @@ Control *ControlFactory::createControl(TCOContext *context, xmlNode *node)
 	Control *control = 0;
 	switch (type) {
 	case Control::KEY:
+#ifdef _DEBUG
+		fprintf(stderr, "key: x=%d y=%d w=%d h=%d scancode=%d mod=%d unicode=%d\n", x, y, w, h, scancode, mod, unicode);
+#endif
 		control = new Control(context->screenContext(), type, x, y, w, h,
 				new KeyEventDispatcher(context->handleKeyFunc(), sym, mod, scancode, unicode));
 		break;

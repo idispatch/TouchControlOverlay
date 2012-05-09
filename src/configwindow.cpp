@@ -49,18 +49,22 @@ screen_buffer_t ConfigWindow::draw(TCOContext *emuContext)
 		return 0;
 	}
 
-	{
-		/* Fill pixels */
-		int i=0,j=0;
-		for (i=0; i<m_size[1]; i++) {
-			for (j=0; j<m_size[0]; j++) {
-				pixels[i*stride+j*4] = 0xa0;
-				pixels[i*stride+j*4+1] = 0xa0;
-				pixels[i*stride+j*4+2] = 0xa0;
-				pixels[i*stride+j*4+3] = 0xa0;
-			}
+	int y=0,x=0;
+	unsigned char c;
+	const int cell_size = 16;
+	for (y=0; y<m_size[1]; y++) {
+		int t = y & cell_size;
+		int h = y * stride;
+		for (x=0; x < m_size[0]; x++) {
+			int p = x * 4;
+			c = ((x & cell_size) ^ t) ? 0xa0 : 0x80;
+			pixels[h + p + 0] = c;
+			pixels[h + p + 1] = c;
+			pixels[h + p + 2] = c;
+			pixels[h + p + 3] = 0xa0;
 		}
 	}
+
 	emuContext->drawControls(buffer);
 	return buffer;
 }

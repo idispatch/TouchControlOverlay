@@ -33,7 +33,7 @@ Label::Label(screen_context_t context, int x, int y, unsigned width, unsigned he
 	}
 
 	if (file) {
-		PNGReader png(file, context);
+		PNGReader png(file, imageFile, context);
 		if (png.doRead()) {
 			m_window = LabelWindow::create(context, width, height);
 			m_window->draw(png);

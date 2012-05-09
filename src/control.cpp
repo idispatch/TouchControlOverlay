@@ -104,7 +104,7 @@ bool Control::loadFromPNG(const char *filename)
 		return false;
 	}
 
-	PNGReader png(file, m_context);
+	PNGReader png(file, filename, m_context);
 	if (!png.doRead())
 		return false;
 
@@ -166,8 +166,7 @@ void Control::draw(screen_buffer_t buffer) const
 			SCREEN_BLIT_DESTINATION_Y, m_y,
 			SCREEN_BLIT_DESTINATION_WIDTH, m_width,
 			SCREEN_BLIT_DESTINATION_HEIGHT, m_height,
-			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_NONE,
-			SCREEN_BLIT_GLOBAL_ALPHA, 192,
+			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE_OVER,
 			SCREEN_BLIT_END
 	};
 	screen_blit(m_context, buffer, m_buffer, attribs);

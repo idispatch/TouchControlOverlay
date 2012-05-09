@@ -23,7 +23,7 @@
 class PNGReader
 {
 public:
-	PNGReader(FILE *file, screen_context_t context);
+	PNGReader(FILE *file, const char * file_name, screen_context_t context);
 	~PNGReader();
 
 	bool doRead();
@@ -37,6 +37,7 @@ public:
 	int m_height;
 	int m_stride;
 	FILE *m_file;
+	char * m_file_name;
 	screen_pixmap_t m_pixmap;
 	screen_buffer_t m_buffer;
 };
