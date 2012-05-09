@@ -24,7 +24,7 @@
 
 ConfigWindow* ConfigWindow::createConfigWindow(screen_context_t context, screen_window_t parent)
 {
-	const int zOrder = 10; /* FIXME: hardcoded */
+	const int zOrder = 10;
 	ConfigWindow *window = new ConfigWindow(context, parent);
 	if (!window->m_valid) {
 		delete window;

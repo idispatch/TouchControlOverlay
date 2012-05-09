@@ -233,19 +233,6 @@ bool TCOContext::touchEvent(screen_event_t event)
     screen_get_event_property_llv(event, SCREEN_PROPERTY_TIMESTAMP, (long long*)&timestamp);
     screen_get_event_property_iv(event, SCREEN_PROPERTY_SEQUENCE_ID, (int*)&sequenceId);
 
-#if 0
-    if (type == SCREEN_EVENT_MTOUCH_TOUCH)
-    	m_touchMap[contactId].downThisFrame = true;
-    if (type == SCREEN_EVENT_MTOUCH_RELEASE && m_touchMap[contactId].downThisFrame)
-    	m_touchMap[contactId].tap = true;
-    m_touchMap[contactId].valid = true;
-    m_touchMap[contactId].pos[0] = pos[0];
-    m_touchMap[contactId].pos[1] = pos[1];
-    m_touchMap[contactId].type = type;
-    m_touchMap[contactId].timestamp = timestamp;
-
-    return true;
-#else
     Control * touchPointOwner = m_controlMap[contactId];
     if (touchPointOwner) {
     	handled = touchPointOwner->handleTouch(type, contactId, pos, timestamp);
@@ -269,7 +256,6 @@ bool TCOContext::touchEvent(screen_event_t event)
     }
 
 	return handled;
-#endif
 }
 
 void TCOContext::drawControls(screen_buffer_t buffer)

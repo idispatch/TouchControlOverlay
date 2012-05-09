@@ -25,10 +25,6 @@
 
 const static int TAP_THRESHOLD = 150000000L;
 const static int JITTER_THRESHOLD = 10;
-const static int pngRed = 0;
-const static int pngGreen = 1;
-const static int pngBlue = 2;
-const static int pngAlpha = 3;
 
 Control::Control(screen_context_t context, ControlType type,
 		int x, int y, unsigned width, unsigned height,
@@ -79,13 +75,11 @@ void Control::fill()
 	unsigned char *pixels;
 	int stride;
 
-	int rc = screen_create_pixmap(&m_pixmap, m_context); /* FIXME: Check failure */
+	int rc = screen_create_pixmap(&m_pixmap, m_context);
 	rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_FORMAT, &format);
 	rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_BUFFER_SIZE, size);
 	rc = screen_create_pixmap_buffer(m_pixmap);
 	rc = screen_get_pixmap_property_pv(m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&m_buffer);
-/* 	rc = screen_get_buffer_property_pv(m_buffer, SCREEN_PROPERTY_POINTER, (void **)&pixels); */
-/* 	rc = screen_get_buffer_property_iv(m_buffer, SCREEN_PROPERTY_STRIDE, &stride); */
 	int attribs[] = {
 		SCREEN_BLIT_COLOR, (int)controlColors[controlNum],
 		SCREEN_BLIT_END
@@ -229,7 +223,6 @@ bool Control::handleTouch(int type, int contactId, const int pos[], long long ti
 			}
 			break;
 		case TOUCHAREA:
-			/* fprintf(stderr, "Toucharea: new touch %d,%d\n", pos[0],pos[1]); */
 			m_touchDownTime = timestamp;
 			m_lastPos[0] = pos[0];
 			m_lastPos[1] = pos[1];

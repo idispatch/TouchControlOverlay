@@ -19,7 +19,7 @@
 
 LabelWindow *LabelWindow::create(screen_context_t context, int width, int height)
 {
-	const int zOrder = 6; // FIXME: hardcoded
+	const int zOrder = 6;
 	LabelWindow *window = new LabelWindow(context, width, height);
 	if (!window->m_valid) {
 		delete window;
