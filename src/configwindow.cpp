@@ -131,8 +131,12 @@ void ConfigWindow::runEventLoop(TCOContext *emuContext)
 						screen_get_event_property_iv(se, SCREEN_PROPERTY_POSITION, endPos);
 					}
 					break;
+				case SCREEN_EVENT_PROPERTY:
+					break;
 				default:
+#ifdef _DEBUG
 					fprintf(stderr, "Unknown screen event: %d\n", eventType);
+#endif
 					break;
 				}
 			}
