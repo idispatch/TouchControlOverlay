@@ -151,4 +151,7 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="TouchControlOverlay.null.1729425052" name="TouchControlOverlay"/>
+	</storageModule>
 </cproject>
