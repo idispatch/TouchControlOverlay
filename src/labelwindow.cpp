@@ -76,17 +76,21 @@ void LabelWindow::showAt(screen_window_t parent, int x, int y)
 
 	int visible = 1;
 	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_VISIBLE, &visible);
+#ifdef _DEBUG
 	if (rc) {
 		perror("set label window visible: ");
 	}
+#endif
 }
 
 void LabelWindow::move(int x, int y)
 {
 	int position[] = {x, y};
 	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_POSITION, position);
+#ifdef _DEBUG
 	if (rc) {
 		perror("LabelWindow set position: ");
 		return;
 	}
+#endif
 }

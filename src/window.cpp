@@ -27,7 +27,9 @@ EmulationWindow::EmulationWindow(screen_context_t screenContext, screen_window_t
 	int size[2] = {0,0};
 	int rc = screen_get_window_property_iv(parent, SCREEN_PROPERTY_BUFFER_SIZE, size);
 	if (rc) {
+#ifdef _DEBUG
 		perror("screen_get_window_property_iv(size)");
+#endif
 		return;
 	}
 	m_size[0] = size[0];
@@ -54,13 +56,17 @@ void EmulationWindow::init(screen_window_t parent)
 
 	rc = screen_create_window_type(&m_window, m_context, SCREEN_CHILD_WINDOW);
 	if (rc) {
+#ifdef _DEBUG
 		perror("screen_create_window");
+#endif
 		return;
 	}
 
 	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_FORMAT, &format);
 	if (rc) {
+#ifdef _DEBUG
 		perror("screen_set_window_property_iv(SCREEN_PROPERTY_FORMAT)");
+#endif
 		screen_destroy_window(m_window);
 		m_window = 0;
 		return;
@@ -68,7 +74,9 @@ void EmulationWindow::init(screen_window_t parent)
 
 	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_USAGE, &usage);
 	if (rc) {
+#ifdef _DEBUG
 		perror("screen_set_window_property_iv(SCREEN_PROPERTY_USAGE)");
+#endif
 		screen_destroy_window(m_window);
 		m_window = 0;
 		return;
@@ -76,7 +84,9 @@ void EmulationWindow::init(screen_window_t parent)
 
 	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SIZE, m_size);
 	if (rc) {
+#ifdef _DEBUG
 		perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
+#endif
 		screen_destroy_window(m_window);
 		m_window = 0;
 		return;
@@ -84,7 +94,9 @@ void EmulationWindow::init(screen_window_t parent)
 
 	rc = screen_create_window_buffers(m_window, 2);
 	if (rc) {
+#ifdef _DEBUG
 		perror("screen_create_window_buffers");
+#endif
 		screen_destroy_window(m_window);
 		m_window = 0;
 		return;
@@ -111,20 +123,26 @@ bool EmulationWindow::setParent(screen_window_t parent)
 
 		rc = screen_get_window_property_cv(parent, SCREEN_PROPERTY_GROUP, 256, buffer);
 		if (rc) {
+#ifdef _DEBUG
 			perror("screen_get_window_property_cv(SCREEN_PROPERTY_GROUP)");
+#endif
 			return false;
 		}
 
 		rc = screen_join_window_group(m_window, buffer);
 		if (rc) {
+#ifdef _DEBUG
 			perror("screen_join_window_group");
+#endif
 			return false;
 		}
 		m_parent = parent;
 	} else if (m_parent) {
 		rc = screen_leave_window_group(m_window);
 		if (rc) {
+#ifdef _DEBUG
 			perror("screen_leave_window_group");
+#endif
 			return false;
 		}
 		m_parent = 0;
