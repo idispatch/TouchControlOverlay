@@ -94,7 +94,9 @@ bool Control::loadFromPNG(const char *filename)
 {
 	FILE *file = fopen(filename, "rb");
 	if (!file) {
+#ifdef _DEBUG
 		fprintf(stderr, "Unable to open file %s\n", filename);
+#endif
 		return false;
 	}
 

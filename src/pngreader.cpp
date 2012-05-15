@@ -60,30 +60,40 @@ PNGReader::~PNGReader()
 bool PNGReader::doRead()
 {
 	png_byte header[8];
-    if(fread(header, 1, sizeof(header), m_file) < sizeof(header)) {
-    	fprintf(stderr, "Could not read PNG header in file %s\n", m_file_name);
-    	return false;
-    }
+	if(fread(header, 1, sizeof(header), m_file) < sizeof(header)) {
+#ifdef _DEBUG
+		fprintf(stderr, "Could not read PNG header in file %s\n", m_file_name);
+#endif
+		return false;
+	}
 
-    if (png_sig_cmp(header, 0, sizeof(header))) {
-    	fprintf(stderr, "Invalid PNG header in file %s\n", m_file_name);
-    	return false;
-    }
+	if (png_sig_cmp(header, 0, sizeof(header))) {
+#ifdef _DEBUG
+		fprintf(stderr, "Invalid PNG header in file %s\n", m_file_name);
+#endif
+		return false;
+	}
 
 	m_read = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!m_read) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to create PNG read struct\n");
+#endif
 		return false;
 	}
 
 	m_info = png_create_info_struct(m_read);
 	if (!m_info) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to create PNG info struct\n");
+#endif
 		return false;
 	}
 
 	if (setjmp(png_jmpbuf(m_read))) {
+#ifdef _DEBUG
 		fprintf(stderr, "PNG jumped to failure\n");
+#endif
 		return false;
 	}
 
@@ -93,32 +103,40 @@ bool PNGReader::doRead()
 
 	m_width = png_get_image_width(m_read, m_info);
 	if (m_width <= 0 || m_width > 1024) {
+#ifdef _DEBUG
 		fprintf(stderr, "Invalid PNG width: %d (in file %s)\n", m_width, m_file_name);
+#endif
 		return false;
 	}
 
 	m_height = png_get_image_height(m_read, m_info);
 	if (m_height <= 0 || m_height > 600) {
+#ifdef _DEBUG
 		fprintf(stderr, "Invalid PNG height: %d (in file %s)\n", m_height, m_file_name);
+#endif
 		return false;
 	}
 
 	png_byte color_type = png_get_color_type(m_read, m_info);
 	if(PNG_COLOR_TYPE_RGBA != color_type) {
+#ifdef _DEBUG
 		fprintf(stderr,
 				"Invalid PNG color type %d, must be %d (in file %s)\n",
 				color_type, PNG_COLOR_TYPE_RGBA, m_file_name);
+#endif
 		return false;
 	}
 	png_byte bit_depth = png_get_bit_depth(m_read, m_info);
 	if(8 != bit_depth) {
+#ifdef _DEBUG
 		fprintf(stderr,
 				"Invalid PNG bit depth %d, must be %d (in file %s)\n",
 				bit_depth, 8, m_file_name);
+#endif
 		return false;
 	}
 
-    png_read_update_info(m_read, m_info);
+	png_read_update_info(m_read, m_info);
 
 	const int channels = 4;
 	png_set_palette_to_rgb(m_read);
@@ -140,26 +158,34 @@ bool PNGReader::doRead()
 
 	rc = screen_create_pixmap(&m_pixmap, m_context);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to create pixmap - %s (for file %s)\n",
 				strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 	rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_FORMAT, &format);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to set pixmap property %d - %s (for file %s)\n",
 				SCREEN_PROPERTY_FORMAT, strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 	rc = screen_set_pixmap_property_iv(m_pixmap, SCREEN_PROPERTY_BUFFER_SIZE, size);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to set pixmap property %d - %s (for file %s)\n",
 				SCREEN_PROPERTY_BUFFER_SIZE, strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 	rc = screen_create_pixmap_buffer(m_pixmap);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to create pixmap buffer - %s (for file %s)\n",
 				strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 
@@ -167,20 +193,26 @@ bool PNGReader::doRead()
 	int realStride;
 	rc = screen_get_pixmap_property_pv(m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&m_buffer);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to get pixmap property %d - %s (for file %s)\n",
 				SCREEN_PROPERTY_RENDER_BUFFERS, strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 	rc = screen_get_buffer_property_pv(m_buffer, SCREEN_PROPERTY_POINTER, (void **)&realPixels);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to get buffer property %d - %s (for file %s)\n",
 				SCREEN_PROPERTY_POINTER, strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 	rc = screen_get_buffer_property_iv(m_buffer, SCREEN_PROPERTY_STRIDE, &realStride);
 	if(rc != 0) {
+#ifdef _DEBUG
 		fprintf(stderr, "Failed to get buffer property %d - %s (for file %s)\n",
 				SCREEN_PROPERTY_STRIDE, strerror(errno), m_file_name);
+#endif
 		return false;
 	}
 

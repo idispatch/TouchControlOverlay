@@ -27,7 +27,7 @@ LabelWindow *LabelWindow::create(screen_context_t context, int width, int height
 	}
 
 	if (!window->setZOrder(zOrder) ||
-			!window->setTouchSensitivity(false)) {
+		!window->setTouchSensitivity(false)) {
 		delete window;
 		return 0;
 	}
@@ -41,7 +41,9 @@ void LabelWindow::draw(PNGReader &reader)
 	unsigned char *pixels;
 	int stride;
 	if (!getPixels(&buffer, &pixels, &stride)) {
+#ifdef _DEBUG
 		fprintf(stderr, "Unable to get label window buffer\n");
+#endif
 		return;
 	}
 	screen_buffer_t pixmapBuffer;
@@ -57,6 +59,7 @@ void LabelWindow::draw(PNGReader &reader)
 			SCREEN_BLIT_DESTINATION_WIDTH, m_size[0],
 			SCREEN_BLIT_DESTINATION_HEIGHT, m_size[1],
 			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE_OVER,
+			SCREEN_BLIT_GLOBAL_ALPHA, 0x45,
 			SCREEN_BLIT_END
 	};
 	screen_blit(m_context, buffer, pixmapBuffer, attribs);

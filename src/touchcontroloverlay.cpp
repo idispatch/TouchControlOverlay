@@ -146,7 +146,9 @@ int TCOContext::loadControls(const char *filename)
 
 	xml.m_doc = xmlReadFile(filename, NULL, 0);
 	if (xml.m_doc == NULL) {
+#ifdef _DEBUG
 		fprintf(stderr, "Unable to parse control file %s\n", filename);
+#endif
 		return TCO_FAILURE;
 	}
 
@@ -175,7 +177,9 @@ int TCOContext::loadControls(const char *filename)
 	}
 
 	if (!versionMatch) {
+#ifdef _DEBUG
 		fprintf(stderr, "Version mismatch\n");
+#endif
 		return TCO_FAILURE;
 	}
 

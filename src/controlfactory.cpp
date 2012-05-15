@@ -174,7 +174,9 @@ Control *ControlFactory::createControl(TCOContext *context, xmlNode *node)
 
 	if (imageFile) {
 		if (!control->loadFromPNG((char*)(imageFile)))
+#ifdef _DEBUG
 			fprintf(stderr, "Failed to load from PNG\n");
+#endif
 	} else {
 		control->fill();
 	}

@@ -138,20 +138,26 @@ bool EmulationWindow::getPixels(screen_buffer_t *buffer, unsigned char **pixels,
 	int rc = screen_get_window_property_pv(m_window,
 			SCREEN_PROPERTY_RENDER_BUFFERS, (void**)buffers);
 	if (rc) {
+#ifdef _DEBUG
 		fprintf(stderr, "Cannot get window render buffers: %s", strerror(errno));
+#endif
 		return false;
 	}
 	*buffer = buffers[0];
 
 	rc = screen_get_buffer_property_pv(*buffer, SCREEN_PROPERTY_POINTER, (void **)pixels);
 	if (rc) {
+#ifdef _DEBUG
 		fprintf(stderr, "Cannot get buffer pointer: %s", strerror(errno));
+#endif
 		return false;
 	}
 
 	rc = screen_get_buffer_property_iv(*buffer, SCREEN_PROPERTY_STRIDE, stride);
 	if (rc) {
+#ifdef _DEBUG
 		fprintf(stderr, "Cannot get stride: %s", strerror(errno));
+#endif
 		return false;
 	}
 	return true;
@@ -161,7 +167,9 @@ bool EmulationWindow::setZOrder(int zOrder) const
 {
 	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_ZORDER, &zOrder);
 	if (rc) {
+#ifdef _DEBUG
 		fprintf(stderr, "Cannot set z-order: %s", strerror(errno));
+#endif
 		return false;
 	}
 	return true;
@@ -172,7 +180,9 @@ bool EmulationWindow::setTouchSensitivity(bool isSensitive) const
 	int sensitivity = (isSensitive)?SCREEN_SENSITIVITY_ALWAYS:SCREEN_SENSITIVITY_NEVER;
 	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SENSITIVITY, &sensitivity);
 	if (rc) {
+#ifdef _DEBUG
 		fprintf(stderr, "Cannot set screen sensitivity: %s", strerror(errno));
+#endif
 		return false;
 	}
 	return true;
