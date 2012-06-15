@@ -1,5 +1,5 @@
-*.o
-*.a
-*.so
-*.so.pinfo
-*.a.pinfo
+Device-Debug
+Device-Release
+Simulator-Debug
+.settings
+.DS_Store
