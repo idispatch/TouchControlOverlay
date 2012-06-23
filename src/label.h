@@ -25,7 +25,7 @@ class LabelWindow;
 class Label
 {
 public:
-	Label(screen_context_t context, int x, int y, unsigned width, unsigned height, char *imageFile);
+	Label(screen_context_t context, int x, int y, unsigned width, unsigned height, int alpha, char *imageFile);
 	~Label();
 
 	void setControl(Control *control) { m_control = control; }

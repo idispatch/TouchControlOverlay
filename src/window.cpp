@@ -34,17 +34,18 @@ EmulationWindow::EmulationWindow(screen_context_t screenContext, screen_window_t
 	}
 	m_size[0] = size[0];
 	m_size[1] = size[1];
-
+	m_alpha = 0xFF;
 	init(parent);
 }
 
-EmulationWindow::EmulationWindow(screen_context_t screenContext, int width, int height, screen_window_t parent)
+EmulationWindow::EmulationWindow(screen_context_t screenContext, int width, int height, int alpha, screen_window_t parent)
 	: m_context(screenContext)
 	, m_parent(0)
 {
 	m_valid = false;
 	m_size[0] = width;
 	m_size[1] = height;
+	m_alpha = alpha;
 	init(parent);
 }
 

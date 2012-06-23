@@ -25,15 +25,15 @@ class PNGReader;
 class LabelWindow : public EmulationWindow
 {
 public:
-	static LabelWindow *create(screen_context_t context, int width, int height);
+	static LabelWindow *create(screen_context_t context, int width, int height, int alpha);
 
 	void draw(PNGReader &reader);
 	void showAt(screen_window_t parent, int x, int y);
 	void move(int x, int y);
 
 protected:
-	LabelWindow(screen_context_t screenContext, int width, int height)
-		: EmulationWindow(screenContext, width, height)
+	LabelWindow(screen_context_t screenContext, int width, int height, int alpha)
+		: EmulationWindow(screenContext, width, height, alpha)
 	{}
 };
 

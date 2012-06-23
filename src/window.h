@@ -26,7 +26,7 @@ public:
 
 protected:
 	EmulationWindow(screen_context_t screenContext, screen_window_t parent=0);
-	EmulationWindow(screen_context_t screenContext, int width, int height, screen_window_t parent=0);
+	EmulationWindow(screen_context_t screenContext, int width, int height, int alpha, screen_window_t parent=0);
 
 	bool setZOrder(int zOrder) const;
 	bool setTouchSensitivity(bool isSensitive) const;
@@ -40,6 +40,7 @@ protected:
 	screen_window_t m_window;
 	screen_window_t m_parent;
 	int m_size[2];
+	int m_alpha;
 
 private:
 	void init(screen_window_t parent);
