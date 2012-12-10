@@ -53,7 +53,8 @@ void EmulationWindow::init(screen_window_t parent)
 {
 	int rc;
 	int format = SCREEN_FORMAT_RGBA8888;
-	int usage = SCREEN_USAGE_NATIVE;
+	int usage = SCREEN_USAGE_NATIVE | SCREEN_USAGE_READ | SCREEN_USAGE_WRITE;
+	int temp[2];
 
 	rc = screen_create_window_type(&m_window, m_context, SCREEN_CHILD_WINDOW);
 	if (rc) {
@@ -83,10 +84,62 @@ void EmulationWindow::init(screen_window_t parent)
 		return;
 	}
 
-	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SIZE, m_size);
+	if (parent) {
+		rc = screen_set_window_property_iv(parent, SCREEN_PROPERTY_SIZE, temp);
+		if (rc) {
+#ifdef _DEBUG
+			perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
+#endif
+			screen_destroy_window(m_window);
+			m_window = 0;
+			return;
+		}
+	
+		rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SIZE, temp);
+		if (rc) {
+#ifdef _DEBUG
+			perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
+#endif
+			screen_destroy_window(m_window);
+			m_window = 0;
+			return;
+		}
+
+		rc = screen_get_window_property_iv(parent, SCREEN_PROPERTY_POSITION, temp);
+		if (rc) {
+#ifdef _DEBUG
+			perror("screen_get_window_property_iv(SCREEN_PROPERTY_POSITION)");
+#endif
+			screen_destroy_window(m_window);
+			m_window = 0;
+			return;
+		}
+
+		rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_POSITION, temp);
+		if (rc) {
+#ifdef _DEBUG
+			perror("screen_set_window_property_iv(SCREEN_PROPERTY_POSITION)");
+#endif
+			screen_destroy_window(m_window);
+			m_window = 0;
+			return;
+		}
+	} else {
+		rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SIZE, m_size);
+		if (rc) {
+#ifdef _DEBUG
+			perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
+#endif
+			screen_destroy_window(m_window);
+			m_window = 0;
+			return;
+		}
+	}
+
+	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_BUFFER_SIZE, m_size);
 	if (rc) {
 #ifdef _DEBUG
-		perror("screen_set_window_property_iv(SCREEN_PROPERTY_SIZE)");
+		perror("screen_set_window_property_iv(SCREEN_PROPERTY_BUFFER_SIZE)");
 #endif
 		screen_destroy_window(m_window);
 		m_window = 0;
@@ -153,6 +206,8 @@ bool EmulationWindow::setParent(screen_window_t parent)
 
 bool EmulationWindow::getPixels(screen_buffer_t *buffer, unsigned char **pixels, int *stride) const
 {
+	if (!m_valid)
+		return false;
 	screen_buffer_t buffers[2];
 	int rc = screen_get_window_property_pv(m_window,
 			SCREEN_PROPERTY_RENDER_BUFFERS, (void**)buffers);
@@ -168,6 +223,12 @@ bool EmulationWindow::getPixels(screen_buffer_t *buffer, unsigned char **pixels,
 	if (rc) {
 #ifdef _DEBUG
 		fprintf(stderr, "Cannot get buffer pointer: %s", strerror(errno));
+#endif
+		return false;
+	}
+	if (!*pixels) {
+#ifdef _DEBUG
+		fprintf(stderr, "Window buffer has no accessible pixels\n");
 #endif
 		return false;
 	}
