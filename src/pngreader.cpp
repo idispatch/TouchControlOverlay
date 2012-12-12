@@ -150,8 +150,10 @@ bool PNGReader::doRead()
 		png_set_filler(m_read, 0xff, PNG_FILLER_AFTER);
 
 	m_data = new unsigned char[m_width * m_height * channels];
+	memset(m_data, 0, m_width * m_height * channels * sizeof(unsigned char));
 	int png_stride = m_width * channels;
 	m_rows = new png_bytep[m_height];
+	memset(m_rows, 0, m_height * sizeof(png_bytep));
 
 	for (int i = m_height - 1; i >= 0; --i) {
 		m_rows[i] = (png_bytep)(m_data + i * png_stride);
@@ -222,6 +224,8 @@ bool PNGReader::doRead()
 		return false;
 	}
 
+	memset(realPixels, 0, realStride * m_height * sizeof(unsigned char));
+
 	unsigned char * buffer_pixel_row = realPixels;
 	unsigned char * png_pixel_row = m_data;
 	for(int i = 0; i < m_height; ++i) {
@@ -230,10 +234,10 @@ bool PNGReader::doRead()
 		buffer_pixel_row += realStride;
 	}
 
+	delete [] m_rows;
+    m_rows = 0;
 	delete [] m_data; /* we copied the data - no need to keep the copy in memory */
 	m_data = 0;
-	delete [] m_rows;
-	m_rows = 0;
 
 	return true;
 }

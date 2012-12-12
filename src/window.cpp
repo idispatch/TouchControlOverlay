@@ -53,7 +53,7 @@ void EmulationWindow::init(screen_window_t parent)
 {
 	int rc;
 	int format = SCREEN_FORMAT_RGBA8888;
-	int usage = SCREEN_USAGE_NATIVE;
+	int usage = SCREEN_USAGE_NATIVE | SCREEN_USAGE_READ | SCREEN_USAGE_WRITE;
 
 	rc = screen_create_window_type(&m_window, m_context, SCREEN_CHILD_WINDOW);
 	if (rc) {
@@ -93,7 +93,7 @@ void EmulationWindow::init(screen_window_t parent)
 		return;
 	}
 
-	rc = screen_create_window_buffers(m_window, 2);
+	rc = screen_create_window_buffers(m_window, 1); /* Do we need 2 buffers?*/
 	if (rc) {
 #ifdef _DEBUG
 		perror("screen_create_window_buffers");
@@ -184,7 +184,9 @@ bool EmulationWindow::getPixels(screen_buffer_t *buffer, unsigned char **pixels,
 
 bool EmulationWindow::setZOrder(int zOrder) const
 {
-	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_ZORDER, &zOrder);
+	int rc = screen_set_window_property_iv(m_window,
+	                                       SCREEN_PROPERTY_ZORDER,
+	                                       &zOrder);
 	if (rc) {
 #ifdef _DEBUG
 		fprintf(stderr, "Cannot set z-order: %s", strerror(errno));
@@ -197,7 +199,9 @@ bool EmulationWindow::setZOrder(int zOrder) const
 bool EmulationWindow::setTouchSensitivity(bool isSensitive) const
 {
 	int sensitivity = (isSensitive)?SCREEN_SENSITIVITY_ALWAYS:SCREEN_SENSITIVITY_NEVER;
-	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SENSITIVITY, &sensitivity);
+	int rc = screen_set_window_property_iv(m_window,
+	                                       SCREEN_PROPERTY_SENSITIVITY,
+	                                       &sensitivity);
 	if (rc) {
 #ifdef _DEBUG
 		fprintf(stderr, "Cannot set screen sensitivity: %s", strerror(errno));
@@ -210,7 +214,12 @@ bool EmulationWindow::setTouchSensitivity(bool isSensitive) const
 void EmulationWindow::post(screen_buffer_t buffer) const
 {
 	int dirtyRects[4] = {0, 0, m_size[0], m_size[1]};
-	screen_post_window(m_window, buffer, 1, dirtyRects, 0);
+	int rc = screen_post_window(m_window, buffer, 1, dirtyRects, 0);
+    if (rc) {
+#ifdef _DEBUG
+        fprintf(stderr, "screen_post_window: %s", strerror(errno));
+#endif
+    }
 }
 
 EmulationWindow::~EmulationWindow()

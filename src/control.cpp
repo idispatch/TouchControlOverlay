@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <errno.h>
 #include "control.h"
 #include "eventdispatcher.h"
 #include "label.h"
@@ -39,6 +39,8 @@ Control::Control(screen_context_t context, ControlType type,
 	, m_dispatcher(dispatcher)
 	, m_tapDispatcher(tapDispatcher)
 	, m_context(context)
+	, m_pixmap(NULL)
+	, m_buffer(NULL)
 	, m_contactId(-1)
 	, m_touchDownTime(0)
 	, m_touchScreenStartTime(0)
@@ -60,7 +62,9 @@ Control::~Control()
 		iter++;
 	}
 	m_labels.clear();
-	screen_destroy_pixmap(m_pixmap);
+	if(m_pixmap) {
+		screen_destroy_pixmap(m_pixmap);
+	}
 	delete m_dispatcher;
 	delete m_tapDispatcher;
 }
@@ -152,7 +156,12 @@ void Control::move(int dx, int dy, unsigned maxDimensions[])
 
 void Control::draw(screen_buffer_t buffer) const
 {
-	screen_get_pixmap_property_pv(m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&m_buffer);
+	int rc = screen_get_pixmap_property_pv(m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&m_buffer);
+	if(rc!=0) {
+		fprintf(stderr, "screen_get_pixmap_property_pv: %s (%d)\n", strerror(errno), errno);
+		fflush(stderr);
+		return;
+	}
 	int attribs[] = {
 			SCREEN_BLIT_SOURCE_X, 0,
 			SCREEN_BLIT_SOURCE_Y, 0,
@@ -163,9 +172,15 @@ void Control::draw(screen_buffer_t buffer) const
 			SCREEN_BLIT_DESTINATION_WIDTH, m_width,
 			SCREEN_BLIT_DESTINATION_HEIGHT, m_height,
 			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE_OVER,
+			SCREEN_BLIT_SCALE_QUALITY, SCREEN_QUALITY_FASTEST,
 			SCREEN_BLIT_END
 	};
-	screen_blit(m_context, buffer, m_buffer, attribs);
+	rc = screen_blit(m_context, buffer, m_buffer, attribs);
+	if(rc!=0) {
+		fprintf(stderr, "screen_blit: %s (%d)\n", strerror(errno), errno);
+		fflush(stderr);
+		return;
+	}
 }
 
 bool Control::inBounds(const int pos[]) const

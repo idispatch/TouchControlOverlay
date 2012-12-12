@@ -20,37 +20,37 @@
 #include "pngreader.h"
 
 Label::Label(screen_context_t context, int x, int y, unsigned width, unsigned height, int alpha,
-        char *imageFile) :
-        m_x(x), m_y(y), m_width(width), m_height(height), m_window(0) {
-    FILE *file = 0;
+		char *imageFile) :
+		m_x(x), m_y(y), m_width(width), m_height(height), m_window(0) {
+	FILE *file = 0;
 
-    if (imageFile) {
-        file = fopen(imageFile, "rb");
-    }
+	if (imageFile) {
+		file = fopen(imageFile, "rb");
+	}
 
-    if (file) {
-        PNGReader png(file, imageFile, context);
-        if (png.doRead()) {
-            m_window = LabelWindow::create(context, width, height, alpha);
-            m_window->draw(png);
-        }
-    }
+	if (file) {
+		PNGReader png(file, imageFile, context);
+		if (png.doRead()) {
+			m_window = LabelWindow::create(context, width, height, alpha);
+			m_window->draw(png);
+		}
+	}
 }
 
 Label::~Label() {
-    m_control = 0;
-    delete m_window;
-    m_window = 0;
+	m_control = 0;
+	delete m_window;
+	m_window = 0;
 }
 
 void Label::draw(screen_window_t window, int x, int y) {
-    if (!m_window)
-        return;
-    m_window->showAt(window, m_x + x, m_y + y);
+	if (!m_window)
+		return;
+	m_window->showAt(window, m_x + x, m_y + y);
 }
 
 void Label::move(int x, int y) {
-    if (!m_window)
-        return;
-    m_window->move(m_x + x, m_y + y);
+	if (!m_window)
+		return;
+	m_window->move(m_x + x, m_y + y);
 }

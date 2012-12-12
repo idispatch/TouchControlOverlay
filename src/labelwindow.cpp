@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <errno.h>
 #include "labelwindow.h"
 #include "pngreader.h"
 
@@ -37,17 +37,20 @@ LabelWindow *LabelWindow::create(screen_context_t context, int width, int height
 
 void LabelWindow::draw(PNGReader &reader)
 {
+	int rc;
 	screen_buffer_t buffer;
 	unsigned char *pixels;
 	int stride;
 	if (!getPixels(&buffer, &pixels, &stride)) {
-#ifdef _DEBUG
 		fprintf(stderr, "Unable to get label window buffer\n");
-#endif
 		return;
 	}
 	screen_buffer_t pixmapBuffer;
-	screen_get_pixmap_property_pv(reader.m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&pixmapBuffer);
+	rc = screen_get_pixmap_property_pv(reader.m_pixmap, SCREEN_PROPERTY_RENDER_BUFFERS, (void**)&pixmapBuffer);
+	if(rc != 0) {
+		fprintf(stderr, "Unable to screen_get_pixmap_property_pv: %s (%d)\n", strerror(errno), errno);
+		return;
+	}
 
 	int attribs[] = {
 			SCREEN_BLIT_SOURCE_X, 0,
@@ -60,12 +63,27 @@ void LabelWindow::draw(PNGReader &reader)
 			SCREEN_BLIT_DESTINATION_HEIGHT, m_size[1],
 			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE_OVER,
 			SCREEN_BLIT_GLOBAL_ALPHA, m_alpha,
+			SCREEN_BLIT_SCALE_QUALITY, SCREEN_QUALITY_FASTEST,
 			SCREEN_BLIT_END
 	};
-	screen_blit(m_context, buffer, pixmapBuffer, attribs);
-	this->post(buffer);
+	rc = screen_blit(m_context, buffer, pixmapBuffer, attribs);
+	if(rc != 0) {
+#ifdef _DEBUG
+		fprintf(stderr, "Unable to screen_blit: %s (%d)\n", strerror(errno), errno);
+#endif
+		return;
+	}
+
+	post(buffer);
+
 	int visible = 0;
-	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_VISIBLE, &visible);
+	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_VISIBLE, &visible);
+	if(rc != 0) {
+#ifdef _DEBUG
+		fprintf(stderr, "Unable to screen_set_window_property_iv: %s (%d)\n", strerror(errno), errno);
+#endif
+		return;
+	}
 }
 
 void LabelWindow::showAt(screen_window_t parent, int x, int y)
@@ -75,12 +93,28 @@ void LabelWindow::showAt(screen_window_t parent, int x, int y)
 		int parentBufferSize[2];
 		int parentSize[2];
 		rc = screen_get_window_property_iv(parent, SCREEN_PROPERTY_POSITION, m_offset);
+		if(rc != 0) {
+			fprintf(stderr, "Unable to screen_get_window_property_iv: %s (%d)\n", strerror(errno), errno);
+			return;
+		}
 		rc = screen_get_window_property_iv(parent, SCREEN_PROPERTY_BUFFER_SIZE, parentBufferSize);
+		if(rc != 0) {
+			fprintf(stderr, "Unable to screen_get_window_property_iv: %s (%d)\n", strerror(errno), errno);
+			return;
+		}
 		rc = screen_get_window_property_iv(parent, SCREEN_PROPERTY_SIZE, parentSize);
+		if(rc != 0) {
+			fprintf(stderr, "Unable to screen_get_window_property_iv: %s (%d)\n", strerror(errno), errno);
+			return;
+		}
 		m_scale[0] = parentSize[0] / (float)parentBufferSize[0];
 		m_scale[1] = parentSize[1] / (float)parentBufferSize[1];
 		int newSize[] = {m_size[0] * m_scale[0], m_size[1] * m_scale[1]};
 		rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_SIZE, newSize);
+		if(rc != 0) {
+			fprintf(stderr, "Unable to screen_set_window_property_iv: %s (%d)\n", strerror(errno), errno);
+			return;
+		}
 	}
 
 	if (!setParent(parent))
@@ -90,21 +124,18 @@ void LabelWindow::showAt(screen_window_t parent, int x, int y)
 
 	int visible = 1;
 	rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_VISIBLE, &visible);
-#ifdef _DEBUG
 	if (rc) {
-		perror("set label window visible: ");
+		fprintf(stderr, "Unable to screen_set_window_property_iv: %s (%d)\n", strerror(errno), errno);
+		return;
 	}
-#endif
 }
 
 void LabelWindow::move(int x, int y)
 {
 	int position[] = {m_offset[0] + (x * m_scale[0]), m_offset[1] + (y * m_scale[1])};
 	int rc = screen_set_window_property_iv(m_window, SCREEN_PROPERTY_POSITION, position);
-#ifdef _DEBUG
 	if (rc) {
-		perror("LabelWindow set position: ");
+		fprintf(stderr, "Unable to screen_set_window_property_iv: %s (%d)\n", strerror(errno), errno);
 		return;
 	}
-#endif
 }
