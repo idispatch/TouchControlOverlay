@@ -109,7 +109,6 @@ void EmulationWindow::init(screen_window_t parent)
 		m_window = 0;
 		return;
 	}
-
 	m_valid = true;
 }
 

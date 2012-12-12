@@ -52,7 +52,19 @@ void LabelWindow::draw(PNGReader &reader)
 		return;
 	}
 
-	int attribs[] = {
+	const int fill_attribs[] = {
+        SCREEN_BLIT_COLOR, 0x0,
+        SCREEN_BLIT_END
+    };
+	rc = screen_fill(m_context, buffer, fill_attribs);
+	if(rc != 0) {
+#ifdef _DEBUG
+        fprintf(stderr, "Unable to screen_fill: %s (%d)\n", strerror(errno), errno);
+#endif
+        return;
+    }
+
+	const int blit_attribs[] = {
 			SCREEN_BLIT_SOURCE_X, 0,
 			SCREEN_BLIT_SOURCE_Y, 0,
 			SCREEN_BLIT_SOURCE_WIDTH, reader.m_width,
@@ -61,12 +73,12 @@ void LabelWindow::draw(PNGReader &reader)
 			SCREEN_BLIT_DESTINATION_Y, 0,
 			SCREEN_BLIT_DESTINATION_WIDTH, m_size[0],
 			SCREEN_BLIT_DESTINATION_HEIGHT, m_size[1],
-			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE_OVER,
+			SCREEN_BLIT_TRANSPARENCY, SCREEN_TRANSPARENCY_SOURCE,
 			SCREEN_BLIT_GLOBAL_ALPHA, m_alpha,
-			SCREEN_BLIT_SCALE_QUALITY, SCREEN_QUALITY_FASTEST,
+			SCREEN_BLIT_SCALE_QUALITY, SCREEN_QUALITY_NICEST,
 			SCREEN_BLIT_END
 	};
-	rc = screen_blit(m_context, buffer, pixmapBuffer, attribs);
+	rc = screen_blit(m_context, buffer, pixmapBuffer, blit_attribs);
 	if(rc != 0) {
 #ifdef _DEBUG
 		fprintf(stderr, "Unable to screen_blit: %s (%d)\n", strerror(errno), errno);
